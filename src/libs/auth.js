@@ -1,21 +1,31 @@
 import { verifyJWT } from "./jwt";
+
 export function authenticateRequest(req) {
-    
     const authHeader = req.headers.get("Authorization");
-    // console.log(req.headers);
-    if (!authHeader) {
-        return null;
+    let token = null;
+
+    if (authHeader) {
+        token = authHeader.split(" ")[1];
+    }
+    
+    if (!token) {
+        const cookieHeader = req.headers.get("cookie");
+        if (cookieHeader) {
+            const cookies = cookieHeader.split(';').reduce((acc, cookie) => {
+                const [key, value] = cookie.trim().split('=');
+                acc[key] = value;
+                return acc;
+            }, {});
+            token = cookies.token;
+        }
     }
 
-    const token = authHeader.split(" ")[1];
-    // console.log("Token from header:", token);
     if (!token) {
         return null;
     }
 
     try {
         const payload = verifyJWT(token);
-        // console.log("Decoded JWT payload:", payload);
         if (!payload) {
             return null;
         }
