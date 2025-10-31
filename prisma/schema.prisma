@@ -1,0 +1,125 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model College {
+  id        Int      @id @default(autoincrement())
+  name      String
+  location  String?
+  domain    String?
+  createdAt DateTime @default(now())
+
+  users     User[]
+  circles   Circle[]
+}
+
+model User {
+  id              Int      @id @default(autoincrement())
+  name            String
+  email           String   @unique
+  passwordHash    String
+  role            String   @default("student") // student, alumni, faculty
+  graduationYear  Int?
+  branch          String?
+  bio             String?
+  profilePic      String?
+  createdAt       DateTime @default(now())
+
+  college         College?   @relation(fields: [collegeId], references: [id])
+  collegeId       Int?
+  posts           Post[]
+  circleMembers   CircleMember[]
+  circlesCreated  Circle[]   @relation("CreatedCircles")
+  comments        Comment[]
+  likes           Like[]
+  connectionsAsStudent Connection[] @relation("StudentConnections")
+  connectionsAsAlumni  Connection[] @relation("AlumniConnections")
+  media           Media[]
+}
+
+model Post {
+  id         Int      @id @default(autoincrement())
+  content    String
+  createdAt  DateTime @default(now())
+
+  user       User     @relation(fields: [userId], references: [id])
+  userId     Int
+  comments   Comment[]
+  likes      Like[]
+  media      Media[]
+}
+
+model Comment {
+  id         Int      @id @default(autoincrement())
+  content    String
+  createdAt  DateTime @default(now())
+
+  user       User @relation(fields: [userId], references: [id])
+  userId     Int
+  post       Post @relation(fields: [postId], references: [id])
+  postId     Int
+}
+
+model Like {
+  post    Post @relation(fields: [postId], references: [id])
+  postId  Int
+  user    User @relation(fields: [userId], references: [id])
+  userId  Int
+
+  @@id([postId, userId])
+}
+
+model Circle {
+  id          Int      @id @default(autoincrement())
+  name        String
+  description String?
+  createdAt   DateTime @default(now())
+
+  createdBy   User     @relation("CreatedCircles", fields: [createdById], references: [id])
+  createdById Int
+  college     College? @relation(fields: [collegeId], references: [id])
+  collegeId   Int?
+  members     CircleMember[]
+  media       Media[]
+}
+
+model CircleMember {
+  circle    Circle @relation(fields: [circleId], references: [id])
+  circleId  Int
+  user      User   @relation(fields: [userId], references: [id])
+  userId    Int
+  role      String  @default("member") // member, admin
+  joinedAt  DateTime @default(now())
+
+  @@id([circleId, userId])
+}
+
+model Connection {
+  id         Int      @id @default(autoincrement())
+  student    User     @relation("StudentConnections", fields: [studentId], references: [id])
+  studentId  Int
+  alumni     User     @relation("AlumniConnections", fields: [alumniId], references: [id])
+  alumniId   Int
+  status     String   @default("pending") // pending, accepted, rejected
+  createdAt  DateTime @default(now())
+}
+
+model Media {
+  id           Int      @id @default(autoincrement())
+  url          String
+  type         String   @default("image") // image, video, document, other
+  createdAt    DateTime @default(now())
+
+  uploadedBy   User?    @relation(fields: [uploadedById], references: [id])
+  uploadedById Int?
+  post         Post?    @relation(fields: [postId], references: [id])
+  postId       Int?
+  circle       Circle?  @relation(fields: [circleId], references: [id])
+  circleId     Int?
+}
+@33402480783418
