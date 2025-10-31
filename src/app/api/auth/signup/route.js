@@ -1,6 +1,6 @@
-import { signJWT } from "@/lib/jwt";
-import prisma  from "@/lib/prisma";
-import bcrypt from 'bcryptjs';
+import { signJWT } from "../../../../libs/jwt";
+import prisma  from "../../../../libs/prisma";
+import bcrypt from 'bcrypt';
 import { NextResponse } from "next/server";
 
 export async function POST(req) {
