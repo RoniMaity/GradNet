@@ -3,6 +3,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+
 generator client {
   provider = "prisma-client-js"
 }
@@ -122,4 +123,3 @@ model Media {
   circle       Circle?  @relation(fields: [circleId], references: [id])
   circleId     Int?
 }
-@33402480783418
