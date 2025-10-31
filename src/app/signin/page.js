@@ -10,7 +10,7 @@ export default async function LoginPage() {
     if (token) {
         const user = verifyJWT(token)
         if (user) {
-            redirect('/dashboard')
+            redirect('/dashbored')
         } else {
             redirect('/signin')
         }
