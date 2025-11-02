@@ -1,5 +1,5 @@
-import { cookies } from 'next/headers'
 import { verifyJWT } from '../../libs/jwt'
+import { cookies } from 'next/headers'
 import SignUpForm from "./SignUpForm"
 import { redirect } from 'next/navigation'
 

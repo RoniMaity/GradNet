@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useReducer } from 'react'
 import {
   Button,
   Field,
@@ -14,45 +14,89 @@ import {
 } from "@chakra-ui/react"
 import { useRouter } from 'next/navigation'
 
-export default function SignUpForm() {
-  const router = useRouter()
-  const [form, setForm] = useState({ name: '', email: '', password: '' })
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState(null)
+function formReducer(state, action) {
+  switch (action.type) {
+    case 'UPDATE_FIELD':
+      return { ...state, [action.field]: action.value }
+    case 'SET_LOADING':
+      return { ...state, loading: action.value }
+    case 'SET_ERROR':
+      return { ...state, error: action.value }
+    default:
+      return state
+  }
+}
 
-  const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value })
+const initialState = {
+  name: '',
+  email: '',
+  password: '',
+  graduationYear: '',
+  branch: '',
+  collegeName: '',
+  collegeLocation: '',
+  loading: false,
+  error: null,
+}
+
+export default function SignUpForm() {
+  const [state, dispatch] = useReducer(formReducer, initialState)
+  const router = useRouter()
+
+  const handleChange = (e) => {
+    dispatch({
+      type: 'UPDATE_FIELD',
+      field: e.target.name,
+      value: e.target.value,
+    })
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    setLoading(true)
-    setError(null)
+    dispatch({ type: 'SET_LOADING', value: true })
+    dispatch({ type: 'SET_ERROR', value: null })
+    console.log(state.collegeName)
 
     try {
       const res = await fetch('/api/auth/signup', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form),
+        body: JSON.stringify({
+          name: state.name,
+          email: state.email,
+          password: state.password,
+          graduationYear: state.graduationYear,
+          branch: state.branch,
+          collegeName: state.collegeName,
+          collegeLocation: state.collegeLocation,
+        }),
       })
+
       const data = await res.json()
       console.log(data)
-      if (data.message === 'User created successfully.') router.push('/dashboard')
-      else setError(data.error || 'Signup failed')
+
+      if (data.message === 'User created successfully.') {
+        router.push('/dashboard')
+      } else {
+        dispatch({ type: 'SET_ERROR', value: data.error || 'Signup failed' })
+      }
     } catch {
-      setError('Server error. Try again.')
+      dispatch({ type: 'SET_ERROR', value: 'Server error. Try again.' })
     } finally {
-      setLoading(false)
+      dispatch({ type: 'SET_LOADING', value: false })
     }
   }
 
   return (
     <AbsoluteCenter>
-      {loading ? (
+      {state.loading ? (
         <ProgressCircle.Root value={null} size="xl" colorPalette={{ base: "teal.500", 500: "teal.600" }}>
           <ProgressCircle.Circle>
             <ProgressCircle.Track />
             <ProgressCircle.Range />
           </ProgressCircle.Circle>
-        </ProgressCircle.Root>) : (
+        </ProgressCircle.Root>
+      ) : (
         <form onSubmit={handleSubmit}>
           <Fieldset.Root size="lg" maxW="md">
             <Stack spacing={6}>
@@ -63,48 +107,32 @@ export default function SignUpForm() {
               </Heading>
 
               <Fieldset.Content>
-                <Field.Root>
-                  <Field.Label>Name</Field.Label>
-                  <Input
-                    name="name"
-                    value={form.name}
-                    onChange={handleChange}
-                    disabled={loading}
-                    required
-                    autoComplete='true'
-                  />
-                </Field.Root>
-
-                <Field.Root>
-                  <Field.Label>Email</Field.Label>
-                  <Input
-                    name="email"
-                    type="email"
-                    value={form.email}
-                    onChange={handleChange}
-                    disabled={loading}
-                    required
-                    autoComplete='true'
-                  />
-                </Field.Root>
-
-                <Field.Root>
-                  <Field.Label>Password</Field.Label>
-                  <Input
-                    name="password"
-                    type="password"
-                    value={form.password}
-                    onChange={handleChange}
-                    disabled={loading}
-                    required
-                    autoComplete='true'
-                  />
-                </Field.Root>
+                {[
+                  { label: "Name", name: "name" },
+                  { label: "Email", name: "email", type: "email" },
+                  { label: "Password", name: "password", type: "password" },
+                  { label: "Graduation Year", name: "graduationYear", type: "number" },
+                  { label: "Branch", name: "branch" },
+                  { label: "College Name", name: "collegeName" },
+                  { label: "College Location", name: "collegeLocation" },
+                ].map(({ label, name, type = "text" }) => (
+                  <Field.Root suppressHydrationWarning={true} key={name}>
+                    <Field.Label>{label}</Field.Label>
+                    <Input
+                      name={name}
+                      type={type}
+                      value={state[name] || ''}
+                      onChange={handleChange}
+                      disabled={state.loading}
+                      required={name !== 'collegeLocation' && name !== 'branch'}
+                    />
+                  </Field.Root>
+                ))}
               </Fieldset.Content>
 
-              {error && <p style={{ color: 'red' }}>{error}</p>}
+              {state.error && <p style={{ color: 'yellow' }}>{state.error}</p>}
 
-              <Button type="submit" alignSelf="flex-start" isLoading={loading} colorScheme="teal">
+              <Button type="submit" alignSelf="flex-start" isLoading={state.loading} colorScheme="teal">
                 Sign Up
               </Button>
               <Button variant="link" onClick={() => router.push('/signin')}>
@@ -112,7 +140,8 @@ export default function SignUpForm() {
               </Button>
             </Stack>
           </Fieldset.Root>
-        </form>)}
+        </form>
+      )}
     </AbsoluteCenter>
   )
 }
