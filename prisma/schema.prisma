@@ -18,18 +18,20 @@ model College {
 }
 
 model User {
-  id                   Int            @id @default(autoincrement())
-  name                 String
-  email                String         @unique
-  passwordHash         String
-  role                 String         @default("student") // student, alumni, faculty
-  graduationYear       Int?
-  branch               String?
-  bio                  String?
-  profilePic           String?
-  createdAt            DateTime       @default(now())
-  college              College?       @relation(fields: [collegeId], references: [id])
-  collegeId            Int?
+  id             Int      @id @default(autoincrement())
+  name           String
+  email          String   @unique
+  passwordHash   String
+  role           String   @default("student")
+  graduationYear Int?
+  branch         String?
+  bio            String?
+  profilePic     String?
+  createdAt      DateTime @default(now())
+  
+  college   College? @relation(fields: [collegeId], references: [id])
+  collegeId Int?
+  
   posts                Post[]
   circleMembers        CircleMember[]
   circlesCreated       Circle[]       @relation("CreatedCircles")
@@ -48,7 +50,6 @@ model Post {
   user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId Int
 
-  // Optional circle relation - allows both standalone and circle posts
   circle   Circle? @relation(fields: [circleId], references: [id], onDelete: Cascade)
   circleId Int?
 
@@ -97,7 +98,7 @@ model CircleMember {
   circleId Int
   user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId   Int
-  role     String   @default("member") // member, admin
+  role     String   @default("member")
   joinedAt DateTime @default(now())
 
   @@id([circleId, userId])
@@ -109,14 +110,14 @@ model Connection {
   studentId Int
   alumni    User     @relation("AlumniConnections", fields: [alumniId], references: [id], onDelete: Cascade)
   alumniId  Int
-  status    String   @default("pending") // pending, accepted, rejected
+  status    String   @default("pending")
   createdAt DateTime @default(now())
 }
 
 model Media {
   id        Int      @id @default(autoincrement())
   url       String
-  type      String   @default("image") // image, video, document, other
+  type      String   @default("image")
   createdAt DateTime @default(now())
 
   uploadedBy   User?   @relation(fields: [uploadedById], references: [id], onDelete: Cascade)
