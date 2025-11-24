@@ -8,8 +8,9 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html suppressHydrationWarning={true} lang="en">
-      <body style={{ margin: 0, padding: 0, fontFamily: 'system-ui, -apple-system, sans-serif' }}>
+    <html suppressHydrationWarning={true}>
+      <body
+      >
         <Provider>{children}</Provider>
       </body>
     </html>
