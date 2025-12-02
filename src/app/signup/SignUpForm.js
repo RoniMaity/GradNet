@@ -2,29 +2,22 @@
 
 import { useReducer } from 'react'
 import {
-  Badge,
   Box,
   Button,
   Fieldset,
   Heading,
-  HStack,
-  Icon,
   SimpleGrid,
   Stack,
   Text,
-  VStack
 } from "@chakra-ui/react"
 import { useRouter } from 'next/navigation'
-import { LuShieldCheck, LuUsers, LuTarget, LuArrowUpRight } from 'react-icons/lu'
-import { motion } from 'framer-motion'
 import Image from 'next/image'
-import AuthSplitLayout from '../../components/auth/AuthSplitLayout'
+import { motion } from 'framer-motion'
+import { Spotlight } from '@/components/ui/spotlight-new'
 import { Input as GradientInput } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 
 const MotionBox = motion.create(Box)
-const MotionVStack = motion.create(VStack)
-const MotionHStack = motion.create(HStack)
 
 const titleGradient = 'linear(120deg, #22D3EE 0%, #0EA5E9 45%, #14B8A6 85%)'
 const primaryButtonStyles = {
@@ -125,29 +118,6 @@ export default function SignUpForm() {
     }
   }
 
-  const featureHighlights = [
-    {
-      title: 'Verified mentors',
-      description: 'Connect with alumni who match your goals and background.',
-      icon: LuShieldCheck,
-    },
-    {
-      title: 'Curated circles',
-      description: 'Join topic-led groups to learn, ship, and grow together.',
-      icon: LuUsers,
-    },
-    {
-      title: 'Career playbooks',
-      description: 'Get templates, referrals, and hiring intel weekly.',
-      icon: LuTarget,
-    },
-    {
-      title: 'Momentum tracking',
-      description: 'Share updates, unlock intros, and stay accountable.',
-      icon: LuArrowUpRight,
-    },
-  ]
-
   const formFields = [
     { label: 'Full name', name: 'name', colSpan: 2 },
     { label: 'Email', name: 'email', type: 'email', colSpan: 2 },
@@ -160,137 +130,43 @@ export default function SignUpForm() {
 
   const isOptionalField = (name) => name === 'branch' || name === 'collegeLocation'
 
-  // Animation variants
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.15,
-        delayChildren: 0.1
-      }
-    }
-  }
-
-  const itemVariants = {
-    hidden: { y: 20, opacity: 0 },
-    visible: {
-      y: 0,
-      opacity: 1,
-      transition: { type: 'spring', stiffness: 50, damping: 15 }
-    }
-  }
-
   return (
-    <AuthSplitLayout
-      /* Keeps the hero content supportive while the form card stays dominant */
-      formWrapperProps={{ px: { base: 0, md: 4 }, mx: 'auto' }}
-      leftPanel={
-        <MotionVStack
-          align="stretch"
-          spacing={{ base: 8, lg: 10 }}
-          color="whiteAlpha.900"
-          variants={containerVariants}
-          initial="hidden"
-          animate="visible"
-        >
-          <MotionBox variants={itemVariants} mb={2}>
-            <Box
-              position="relative"
-              width="220px"
-              height="70px"
-              _hover={{ transform: 'scale(1.05)' }}
-              transition="transform 0.2s"
-            >
-              <Image
-                src="/logo.png"
-                alt="GradNet Logo"
-                fill
-                style={{ objectFit: 'contain', objectPosition: 'left' }}
-                priority
-              />
-            </Box>
-          </MotionBox>
+    <Box position="relative" minH="100vh" bgGradient="linear(135deg, #041C32 0%, #0F766E 35%, #0EA5E9 90%)" overflow="hidden">
+      <Box position="absolute" inset="0" pointerEvents="none" zIndex={0}>
+        <Spotlight
+          gradientFirst="radial-gradient(70% 75% at 50% 30%, rgba(14,165,233,0.35) 0%, rgba(14,165,233,0.08) 50%, transparent 85%)"
+          gradientSecond="radial-gradient(50% 55% at 50% 50%, rgba(32,212,177,0.25) 0%, rgba(32,212,177,0.05) 70%, transparent 100%)"
+          gradientThird="radial-gradient(45% 50% at 50% 50%, rgba(15,118,110,0.15) 0%, rgba(15,118,110,0.03) 70%, transparent 100%)"
+          translateY={-320}
+          width={720}
+          height={1600}
+          smallWidth={320}
+          duration={9}
+          xOffset={160}
+        />
+      </Box>
+      <Box
+        position="absolute"
+        inset="0"
+        opacity={0.35}
+        backgroundImage="linear-gradient(120deg, rgba(255,255,255,0.08) 0%, transparent 45%), linear-gradient(300deg, rgba(15,118,110,0.25) 0%, transparent 60%)"
+        mixBlendMode="screen"
+        pointerEvents="none"
+      />
 
-          <Stack spacing={5} as={motion.div} variants={itemVariants}>
-            <Badge
-              width="fit-content"
-              px={3}
-              py={1}
-              borderRadius="full"
-              bg="whiteAlpha.200"
-              border="1px solid"
-              borderColor="whiteAlpha.400"
-              fontWeight="600"
-              letterSpacing="0.08em"
-            >
-              OPEN BETA ACCESS
-            </Badge>
-            <Heading textStyle="display" bgGradient={titleGradient} bgClip="text" textShadow="0 15px 35px rgba(14,165,233,0.35)" maxW="lg">
-              Build your professional circle with GradNet
-            </Heading>
-            <Text fontSize="lg" color="whiteAlpha.800" maxW="2xl">
-              Graduate faster with warm intros, curated mentors, and accountability cohorts designed for ambitious
-              students. A single profile unlocks the entire GradNet ecosystem.
-            </Text>
-          </Stack>
-
-          <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4} as={motion.div} variants={itemVariants}>
-            {featureHighlights.map((feature) => (
-              <MotionHStack
-                key={feature.title}
-                align="flex-start"
-                spacing={4}
-                bg="whiteAlpha.100"
-                borderRadius="xl"
-                p={4}
-                border="1px"
-                borderColor="whiteAlpha.200"
-                whileHover={{ x: 10, backgroundColor: 'rgba(255,255,255,0.15)' }}
-                transition={{ type: 'spring', stiffness: 300, damping: 20 }}
-                cursor="default"
-              >
-                <Icon as={feature.icon} boxSize={6} color="white" />
-                <Box>
-                  <Text fontWeight="semibold">{feature.title}</Text>
-                  <Text fontSize="sm" color="whiteAlpha.800">
-                    {feature.description}
-                  </Text>
-                </Box>
-              </MotionHStack>
-            ))}
-          </SimpleGrid>
-
-          <MotionBox
-            bg="blackAlpha.300"
-            border="1px solid"
-            borderColor="whiteAlpha.300"
-            borderRadius="2xl"
-            p={5}
-            mt={{ base: 0, lg: 2 }}
-            backdropFilter="blur(8px)"
-            variants={itemVariants}
-            whileHover={{ scale: 1.02 }}
-            transition={{ type: 'spring', stiffness: 200, damping: 20 }}
-          >
-            <SimpleGrid columns={{ base: 1, sm: 2 }} spacing={4}>
-              <Box>
-                <Text fontSize="3xl" fontWeight="700">1,200+</Text>
-                <Text color="whiteAlpha.700">students already building inside GradNet</Text>
-              </Box>
-              <Box>
-                <Text fontSize="3xl" fontWeight="700">92%</Text>
-                <Text color="whiteAlpha.700">match with a mentor within their first week</Text>
-              </Box>
-            </SimpleGrid>
-          </MotionBox>
-        </MotionVStack>
-      }
-      formPanel={
+      <Stack
+        position="relative"
+        zIndex={1}
+        minH="100vh"
+        align="center"
+        justify="center"
+        px={{ base: 4, md: 6 }}
+        py={{ base: 10, md: 16 }}
+      >
         <MotionBox
-          initial={{ x: 40, opacity: 0 }}
-          animate={{ x: 0, opacity: 1 }}
-          transition={{ duration: 0.6, ease: "easeOut", delay: 0.2 }}
+          initial={{ y: 20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ duration: 0.6, ease: "easeOut" }}
           p={{ base: 6, md: 8 }}
           borderRadius="2xl"
           boxShadow="0 45px 120px rgba(2, 6, 23, 0.65)"
@@ -300,6 +176,8 @@ export default function SignUpForm() {
           borderColor="whiteAlpha.300"
           position="relative"
           overflow="hidden"
+          maxW="600px"
+          w="full"
           _before={{
             content: '""',
             position: 'absolute',
@@ -316,12 +194,21 @@ export default function SignUpForm() {
         >
           <form onSubmit={handleSubmit}>
             <Stack spacing={8}>
-              <Stack spacing={3}>
-                <Heading size="lg" bgGradient={titleGradient} bgClip="text">
+              <Stack spacing={4} align="center" textAlign="center">
+                <Box position="relative" width="260px" height="84px" mx="auto">
+                  <Image
+                    src="/logo.png"
+                    alt="GradNet Logo"
+                    fill
+                    style={{ objectFit: 'contain', objectPosition: 'center' }}
+                    priority
+                  />
+                </Box>
+                <Heading size="lg" color="white">
                   Create your GradNet profile
                 </Heading>
                 <Text color="whiteAlpha.700" fontSize="sm">
-                  Tell us about your academic journey so we can unlock relevant mentors, circles, and opportunities for you.
+                  Connect with alumni, join professional circles, and build your network.
                 </Text>
               </Stack>
 
@@ -330,7 +217,7 @@ export default function SignUpForm() {
                   Profile details
                 </Fieldset.Legend>
                 <Fieldset.HelperText color="whiteAlpha.700">
-                  Used to personalise recommendations and ensure verified membership.
+                  Help us verify your student status and connect you with the right alumni.
                 </Fieldset.HelperText>
 
                 <Fieldset.Content pt={4}>
@@ -416,7 +303,7 @@ export default function SignUpForm() {
             </Stack>
           </form>
         </MotionBox>
-      }
-    />
+      </Stack>
+    </Box>
   )
 }

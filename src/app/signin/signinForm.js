@@ -52,7 +52,7 @@ export default function LoginForm() {
                 body: JSON.stringify(form),
             })
             const data = await res.json()
-            
+
             if (res.ok) {
                 setSuccess('Login successful! Redirecting you to the dashboard…')
                 setTimeout(() => {
@@ -147,7 +147,7 @@ export default function LoginForm() {
                                 Sign in to GradNet
                             </Heading>
                             <Text color="whiteAlpha.700" fontSize="sm" maxW="sm">
-                                Rejoin your mentorship circles, track applications, and stay in sync with your cohort.
+                                Connect with alumni, engage in professional circles, and grow your network.
                             </Text>
                         </Stack>
 
