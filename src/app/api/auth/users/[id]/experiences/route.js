@@ -2,63 +2,43 @@ import { NextResponse } from "next/server";
 import prisma from "../../../../../../libs/prisma";
 import { authenticateRequest } from "../../../../../../libs/auth";
 
-// GET all experiences for a user
 export async function GET(request, { params }) {
     try {
         const { id } = await params;
-        const userId = parseInt(id);
 
         const experiences = await prisma.experience.findMany({
-            where: { userId },
-            orderBy: [
-                { isCurrent: 'desc' },
-                { startDate: 'desc' }
-            ]
+            where: { userId: parseInt(id) },
+            orderBy: [{ isCurrent: 'desc' }, { startDate: 'desc' }]
         });
 
         return NextResponse.json(experiences);
-    } catch (error) {
-        console.error("Error fetching experiences:", error);
-        return NextResponse.json(
-            { error: "Internal Server Error" },
-            { status: 500 }
-        );
+    } catch (err) {
+        console.error("fetch experiences error:", err);
+        return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
     }
 }
 
-// POST create a new experience
 export async function POST(request, { params }) {
     try {
-        const requestingUser = authenticateRequest(request);
-        if (!requestingUser) {
-            return NextResponse.json(
-                { error: "Authentication required" },
-                { status: 401 }
-            );
+        const user = authenticateRequest(request);
+        if (!user) {
+            return NextResponse.json({ error: "Authentication required" }, { status: 401 });
         }
 
         const { id } = await params;
         const userId = parseInt(id);
 
-        // Users can only add experiences to their own profile
-        if (requestingUser.id !== userId) {
-            return NextResponse.json(
-                { error: "You can only add experiences to your own profile" },
-                { status: 403 }
-            );
+        if (user.id !== userId) {
+            return NextResponse.json({ error: "Can only add to your own profile" }, { status: 403 });
         }
 
-        const data = await request.json();
-        const { title, company, location, description, startDate, endDate, isCurrent } = data;
+        const { title, company, location, description, startDate, endDate, isCurrent } = await request.json();
 
         if (!title || !company || !startDate) {
-            return NextResponse.json(
-                { error: "Title, company, and start date are required" },
-                { status: 400 }
-            );
+            return NextResponse.json({ error: "Title, company, and start date required" }, { status: 400 });
         }
 
-        const experience = await prisma.experience.create({
+        const exp = await prisma.experience.create({
             data: {
                 userId,
                 title,
@@ -71,12 +51,9 @@ export async function POST(request, { params }) {
             }
         });
 
-        return NextResponse.json(experience, { status: 201 });
-    } catch (error) {
-        console.error("Error creating experience:", error);
-        return NextResponse.json(
-            { error: "Internal Server Error" },
-            { status: 500 }
-        );
+        return NextResponse.json(exp, { status: 201 });
+    } catch (err) {
+        console.error("create experience error:", err);
+        return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
     }
 }

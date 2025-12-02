@@ -19,12 +19,14 @@ import { HiSearch, HiPlus, HiUsers } from 'react-icons/hi'
 import LeftSidebar from '@/components/leftSideBar'
 import { toaster } from '@/components/ui/toaster'
 import { Avatar } from '@/components/ui/avatar'
+import CreateCircleModal from '@/components/CreateCircleModal'
 
 export default function CirclesPage() {
   const router = useRouter()
   const [circles, setCircles] = useState([])
   const [loading, setLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState('')
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
 
   const fetchCircles = async () => {
     try {
@@ -56,13 +58,11 @@ export default function CirclesPage() {
   }, [])
 
   const handleCreateCircle = () => {
-    // Navigate to create circle page (to be implemented)
-    toaster.create({
-      title: 'Feature Coming Soon',
-      description: 'Circle creation will be available soon',
-      type: 'info',
-      duration: 3000,
-    })
+    setIsCreateModalOpen(true)
+  }
+
+  const handleCircleCreated = (newCircle) => {
+    setCircles(prev => [newCircle, ...prev])
   }
 
   const handleCircleClick = (circleId) => {
@@ -118,7 +118,6 @@ export default function CirclesPage() {
               Circles
             </Heading>
             <Button
-              leftIcon={<HiPlus />}
               bg="black"
               color="white"
               border="1px solid"
@@ -133,7 +132,10 @@ export default function CirclesPage() {
               }}
               onClick={handleCreateCircle}
             >
-              Create Circle
+              <HStack gap={2}>
+                <HiPlus />
+                <Text>Create Circle</Text>
+              </HStack>
             </Button>
           </Flex>
 
@@ -262,6 +264,12 @@ export default function CirclesPage() {
           )}
         </Box>
       </Box>
+
+      <CreateCircleModal
+        isOpen={isCreateModalOpen}
+        onClose={() => setIsCreateModalOpen(false)}
+        onCircleCreated={handleCircleCreated}
+      />
     </Flex>
   )
 }
