@@ -38,4 +38,4 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
 
 ### Demo Video
 
-<img src="./public/'WhatsApp Video 2025-12-02 at 22.07.48.mp4'" width='100px'/>
+https://github.com/user-attachments/assets/e911ebb7-e7c7-4ce4-91eb-b7f857f560c4
