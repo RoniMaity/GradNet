@@ -39,3 +39,9 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
 ### Demo Video
 
 https://github.com/user-attachments/assets/e911ebb7-e7c7-4ce4-91eb-b7f857f560c4
+
+
+### Credentials to demo account
+
+- email:- Teacher_tester@gmail.com
+- password:- testing
