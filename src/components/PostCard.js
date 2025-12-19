@@ -58,8 +58,8 @@ export default function PostCard({ post }) {
     const now = new Date()
     const diff = Math.abs(now - date)
     const days = Math.ceil(diff / (1000 * 60 * 60 * 24))
-    
-    if (days === 1) return '1 day ago'
+
+    if (days === 1) return `${Math.floor(diff / (1000 * 60 * 60))} hours ago`
     if (days < 7) return `${days} days ago`
     if (days < 30) return `${Math.floor(days / 7)} weeks ago`
     

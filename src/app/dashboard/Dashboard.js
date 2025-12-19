@@ -60,7 +60,7 @@ export default function Dashboard() {
             const res = await fetch('/api/auth/posts?sortBy=likes&limit=20&includeCirclePosts=true')
             if (res.ok) {
                 const data = await res.json()
-                setPosts(data)
+                setPosts(data.reverse())
             }
         } catch (err) {
             console.error('Failed to refresh posts:', err)
